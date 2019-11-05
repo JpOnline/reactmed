@@ -55,7 +55,7 @@ goog.addDependency("../re_frame/cofx.js", ['re_frame.cofx'], ['re_frame.intercep
 goog.addDependency("../re_frame/std_interceptors.js", ['re_frame.std_interceptors'], ['re_frame.interceptor', 're_frame.trace', 're_frame.registrar', 'cljs.core', 're_frame.utils', 're_frame.loggers', 're_frame.cofx', 'clojure.data', 're_frame.db']);
 goog.addDependency("../re_frame/subs.js", ['re_frame.subs'], ['re_frame.interop', 're_frame.trace', 're_frame.registrar', 'cljs.core', 're_frame.utils', 're_frame.loggers', 're_frame.db']);
 goog.addDependency("../re_frame/core.js", ['re_frame.core'], ['re_frame.interop', 're_frame.interceptor', 're_frame.events', 're_frame.fx', 're_frame.registrar', 'cljs.core', 're_frame.router', 'clojure.set', 're_frame.std_interceptors', 're_frame.loggers', 're_frame.subs', 're_frame.cofx', 're_frame.db']);
-goog.addDependency("../react_med/util.js", ['react_med.util'], ['cljs.core', 're_frame.core']);
+goog.addDependency("../react_med/util.js", ['react_med.util'], ['reagent.core', 'cljs.core', 're_frame.core']);
 goog.addDependency("../clojure/zip.js", ['clojure.zip'], ['cljs.core']);
 goog.addDependency("../cljs/env.js", ['cljs.env'], ['cljs.core']);
 goog.addDependency("../cljs/tools/reader/impl/utils.js", ['cljs.tools.reader.impl.utils'], ['goog.string', 'cljs.core', 'clojure.string']);
@@ -76,9 +76,10 @@ goog.addDependency("../debux/common/util.js", ['debux.common.util'], ['clojure.z
 goog.addDependency("../debux/common/macro_specs.js", ['debux.common.macro_specs'], ['cljs.core', 'cljs.spec.alpha']);
 goog.addDependency("../day8/re_frame/tracing.js", ['day8.re_frame.tracing'], ['debux.common.util', 'cljs.core', 'cljs.spec.alpha', 'debux.common.macro_specs']);
 goog.addDependency("../react_med/shell_components.js", ['react_med.shell_components'], ['tab', 'react_med.util', 'more_vert', 'menu_item', 'cljs.core', 'tabs', 'paper', 'menu_icon', 'close_icon', 'icon_button', 'menu_list', 'day8.re_frame.tracing', 'arrow_back', 're_frame.core']);
+goog.addDependency("../react_med/screens/paciente_avaliacao.js", ['react_med.screens.paciente_avaliacao'], ['react_med.util', 'reagent.core', 'cljs.core', 'react_med.shell_components', 'day8.re_frame.tracing', 're_frame.core']);
 goog.addDependency("../pushy/core.js", ['pushy.core'], ['goog.history.Html5History.TokenTransformer', 'goog.Uri', 'cljs.core', 'goog.history.EventType', 'goog.History', 'goog.history.Html5History', 'clojure.string', 'goog.events']);
-goog.addDependency("../react_med/screens/patient_info/core.js", ['react_med.screens.patient_info.core'], ['react_med.util', 'cljs.core', 'react_med.shell_components', 're_frame.core']);
-goog.addDependency("../react_med/routes.js", ['react_med.routes'], ['bidi.bidi', 'react_med.util', 'cljs.core', 'react_med.shell_components', 'day8.re_frame.tracing', 'pushy.core', 'react_med.screens.patient_info.core', 're_frame.core']);
+goog.addDependency("../react_med/screens/patient_info/core.js", ['react_med.screens.patient_info.core'], ['react_med.util', 'reagent.core', 'cljs.core', 'react_med.shell_components', 'day8.re_frame.tracing', 're_frame.core']);
+goog.addDependency("../react_med/routes.js", ['react_med.routes'], ['bidi.bidi', 'react_med.util', 'react_med.screens.paciente_avaliacao', 'cljs.core', 'react_med.shell_components', 'day8.re_frame.tracing', 'pushy.core', 'react_med.screens.patient_info.core', 're_frame.core']);
 goog.addDependency("../react_med/main.js", ['react_med.main'], ['goog.dom', 'reagent.core', 'cljs.core', 'react_med.routes', 'day8.re_frame.tracing', 're_frame.core']);
 goog.addDependency("../dist/index.bundle.js", ['react', 'cljsjs.react'], [], {'foreign-lib': true});
 goog.addDependency("../dist/index.bundle.js", ['react_dom', 'cljsjs.react.dom'], ['react'], {'foreign-lib': true});

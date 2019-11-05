@@ -6,6 +6,7 @@
     [react-med.shell-components :as shell]
     [react-med.screens.patient-info.core :as pi]
     [react-med.util :as util :refer [<sub >evt]]
+    [react-med.screens.paciente-avaliacao :as pa]
     [re-frame.core :as re-frame]))
 
 ;; This is not being useful. Probably, somehow, I should derive the url from the
@@ -19,10 +20,10 @@
 (defn- parse-url [url]
   (bidi/match-route routes url))
 
-(defn-traced set-state
-  [app-state [_ ui-state]]
-  (assoc-in app-state [:ui :state] ui-state))
-(re-frame/reg-event-db ::set-state set-state)
+(defn-traced set-route
+  [app-state [_ ui-route]]
+  (assoc-in app-state [:ui :state] ui-route))
+(re-frame/reg-event-db ::set-route set-route)
 
 (defn- dispatch-route [matched-route]
   (let [ui-state (:handler matched-route)]
@@ -37,10 +38,15 @@
 (def url-for (partial bidi/path-for routes))
 
 (def state-machine
-  {nil {:init :initial}
+  {nil {:init "info"}
    "info" {:edit "info/edit"}
    "info/edit" {:ok "info"
-                :cancel "info"}})
+                :cancel "info"}
+   "avaliacao/<id>" {:back "info"
+                     :edit "avaliacao/<id>/edit"}
+   "avaliacao/<id>/edit" {:ok "avaliacao/<id>"
+                          :cancel "avaliacao/<id>"}
+   })
 
 (defn current->next-state
   [state-machine current-state transition]
@@ -59,15 +65,38 @@
   [db event]
   (next-state-handler db event))
 
-(defn next-state-then [& events]
+(defn-traced backup-domain
+  [app-state]
+  (let [domain-snapshot (get app-state :domain)]
+    (assoc-in app-state [:domain :backup] domain-snapshot)))
+(re-frame/reg-event-db ::backup-domain backup-domain)
+
+(defn-traced restore-domain
+  [app-state]
+  (if-let [old-domain (get-in app-state [:domain :backup])]
+    (-> app-state
+        (assoc :domain old-domain)
+        (update-in [:domain] dissoc :backup))
+    app-state))
+(re-frame/reg-event-db ::restore-domain restore-domain)
+
+(defn-traced discard-backup
+  [app-state]
+  (update-in app-state [:domain] dissoc :backup))
+(re-frame/reg-event-db ::discard-backup discard-backup)
+
+(defn next-state-then [events]
   (fn [{app-state :db} [event _]]
-    (println "next-state-then" (next-state-handler app-state [event]))
     {:db (next-state-handler app-state [event])
      :dispatch-n events}))
 
-(re-frame/reg-event-fx :cancel (next-state-then [::shell/close-actions-menu]))
-(re-frame/reg-event-fx :edit (next-state-then [::shell/close-actions-menu]))
-(re-frame/reg-event-fx :ok (next-state-then [::shell/close-actions-menu]))
+(re-frame/reg-event-fx :edit (next-state-then [[::backup-domain]
+                                               [::shell/close-actions-menu]]))
+(re-frame/reg-event-fx :cancel (next-state-then [[::restore-domain]
+                                                 [::shell/close-actions-menu]]))
+(re-frame/reg-event-fx :ok (next-state-then [[::discard-backup]
+                                             [::shell/close-actions-menu]]))
+(re-frame/reg-event-fx :back (next-state-then [[::restore-domain]]))
 
 (re-frame/reg-sub
   ::state
@@ -77,5 +106,6 @@
   (case (<sub [::state])
     "info" [pi/patient-info]
     "info/edit" [pi/editing-patient-info]
+    "avaliacao/<id>" [pa/detail-view]
+    "avaliacao/<id>/edit" [pa/editing-view]
     [pi/patient-info]))
- 

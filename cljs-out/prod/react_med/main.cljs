@@ -5,22 +5,36 @@
     ;; [react-med.external-storage :as ext-store]
     [re-frame.core :as re-frame]
     [day8.re-frame.tracing :refer-macros [fn-traced defn-traced]]
-    [reagent.core :as reagent :refer [atom]]))
+    [reagent.core :as reagent]))
 
 (defn mount-app-element []
   (when-let [el (gdom/getElement "app")]
     (reagent/render-component [routes/selected-view] el)))
 
+(def initial-state
+  {:domain
+   {:patients
+    [{:id 1
+      :name "Dani"
+      :birth-date "2001-10-01"
+      :gender "Feminino"
+      :height 166
+      :avaliacoes [{:data "2019-10-10"
+                    :peso 45.4
+                    :circunferencia-cintura 63
+                    :circunferencia-braco 23.2
+                    :circunferencia-perna 30.2
+                    :estatura 166
+                    :resistencia 648
+                    :reatancia 59
+                    :atividade-fisica "ativo"}]}]}
+   :ui {:actions-menu {:opened? false}
+        :drawer-menu {:opened? false}
+        :state "info"}})
+
 (re-frame/reg-event-db ::init-app-state
   (fn-traced [_ _]
-    {:domain {:patients [{:id 1
-                          :name "Dani"
-                          :birth-date "2000-10-01"
-                          :gender "Feminino"
-                          :height 166}]}
-     :ui {:actions-menu {:opened? false}
-          :drawer-menu {:opened? false}
-          :state "info"}}))
+    initial-state))
 
 ;; conditionally start your application based on the presence of an "app" element
 ;; this is particularly helpful for testing this ns without launching the app

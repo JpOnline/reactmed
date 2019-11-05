@@ -37,11 +37,15 @@
                 :alignItems "center"}}
    (map-indexed #(with-meta %2 {:key %1}) children)])
 
-(defn left-icon []
-  [:> material-icon-button
+(defn left-icon [{:keys [variation]}]
+  (if (= variation "<-")
+    [:> material-icon-button
      {:color "inherit"
+      :onClick #(>evt [:back])
       :style #js {:marginLeft -12 :marginRight 20}}
-     [:> arrow-back-icon]])
+     [:> arrow-back-icon]]
+    [:div.arrow-back-placeholder
+     {:style #js {:width "56px"}}]))
 
 (defn screen-title [& title-strs]
   [:h6
@@ -52,16 +56,18 @@
                 :margin 0}}
    title-strs])
 
-(defn tabs-menu [& menu-options]
+(defn tabs-menu [{:keys [menu-options]}]
   [:> material-tabs
-   {:value 0
+   {:value (<sub [:react-med.routes/state])
     :TabIndicatorProps #js {:style #js {:backgroundColor util/secondary-color}}
     :variant "scrollable"
     :scrollButtons (if (> (count menu-options) 3) "on" "off")
+    :onChange #(>evt [:react-med.routes/set-route %2])
     :style #js {:overflowX "hidden"}}
    (map #(with-meta
            [:> material-tab
-            {:label %
+            {:label (:label %)
+             :value (:state %)
              :style #js {:flexGrow 1}}]
            {:key %})
         menu-options)])
